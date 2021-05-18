@@ -1,0 +1,4 @@
+service\BenutzerFacadeREST.class
+service\AbstractFacade.class
+demo\bottlecollectorrest\JAXRSConfiguration.class
+model\Benutzer.class
