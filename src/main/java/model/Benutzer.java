@@ -25,14 +25,13 @@ public class Benutzer implements Serializable {
     private long id;
     @Column(unique = true, length = 30)
     private String benutzername;
-    // wird später noch zum byte[] zum testen erstmal string
-    private String passwortHash;
-    //private byte [] salt;
+    private byte [] passwortHash;
+    private byte [] salt;
 
     public Benutzer() {
     }
 
-    public Benutzer(String name, String passwd) {
+    public Benutzer(String name, byte[] passwd) {
         this.id = 0;
         this.benutzername = name;
         this.passwortHash = passwd;
@@ -54,21 +53,21 @@ public class Benutzer implements Serializable {
         this.benutzername = benutzername;
     }
 
-//    public byte[] getPasswortHash() {
-//        return passwortHash;
-//    }
-//
-//    public void setPasswortHash(byte[] passwortHash) {
-//        this.passwortHash = passwortHash;
-//    }
+    public byte[] getPasswortHash() {
+        return passwortHash;
+    }
 
-//    public byte[] getSalt() {
-//        return salt;
-//    }
-//
-//    public void setSalt(byte[] salt) {
-//        this.salt = salt;
-//    }
+    public void setPasswortHash(byte[] passwortHash) {
+        this.passwortHash = passwortHash;
+    }
+
+    public byte[] getSalt() {
+        return salt;
+    }
+
+    public void setSalt(byte[] salt) {
+        this.salt = salt;
+    }
 
     @Override
     public int hashCode() {
@@ -93,15 +92,5 @@ public class Benutzer implements Serializable {
             return false;
         }
         return true;
-    }
-
-    public String getPasswortHash() {
-        return passwortHash;
-    }
-
-    public void setPasswortHash(String passwortHash) {
-        this.passwortHash = passwortHash;
-    }
-    
-    
+    }  
 }

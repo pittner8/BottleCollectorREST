@@ -6,9 +6,17 @@
         <title>Facelet Title</title>
     </h:head>
     <h:body>
-       
-        hello from jsf
-        
+        <h1>Regestrierung</h1>
+        <h:form>
+            <h:panelGrid columns="2">
+                <h:outputText value="Name: "/>
+                <h:inputText value="#{benutzerBean.user.benutzername}"/>
+                <h:outputText value="Passwort: "/>
+                <h:inputSecret value="#{benutzerBean.passwort}"/>
+            </h:panelGrid>
+            <h:commandButton value="Regestrieren" action="#{benutzerBean.regestrieren()}"/>
+            <h:messages errorStyle="color:red" showSummary="true" showDetail="true" infoStyle="color:darkgreen" />
+        </h:form>
     </h:body>
 </html>
 
