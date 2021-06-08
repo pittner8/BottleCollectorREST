@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -27,6 +28,8 @@ public class Benutzer implements Serializable {
     private String benutzername;
     private byte [] passwortHash;
     private byte [] salt;
+    @OneToOne
+    private Statistik statistik;
 
     public Benutzer() {
     }
@@ -67,6 +70,14 @@ public class Benutzer implements Serializable {
 
     public void setSalt(byte[] salt) {
         this.salt = salt;
+    }
+
+    public Statistik getStatistik() {
+        return statistik;
+    }
+
+    public void setStatistik(Statistik statistik) {
+        this.statistik = statistik;
     }
 
     @Override
