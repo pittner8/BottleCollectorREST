@@ -17,6 +17,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.NoResultException;
 import javax.validation.constraints.Size;
 import model.Benutzer;
 import service.BenutzerFacadeREST;
@@ -31,37 +32,42 @@ public class BenutzerBean implements Serializable{
     
     @Inject
     private BenutzerFacadeREST service;
-    @Size(min = 5)
+    @Size(min = 5, message = "Passwort muss mindestens 5 Zeichen lang sein")
     private String passwort;
     private Benutzer user = new Benutzer();
+    private boolean benutzerExistiertNicht = false;
+    private boolean benutzerExistiert = false;
     
     public String anmelden() {
         try {
             Benutzer dbUser = service.sucheBenutzer(user.getBenutzername());
             user.setPasswortHash(hashWithSalt(passwort, dbUser.getSalt()));
             if (Arrays.equals(dbUser.getPasswortHash(), user.getPasswortHash())) {
+                FacesContext.getCurrentInstance().getAttributes().put("benutzer", dbUser);
                 return "statistik";
             }
         } catch (UnsupportedEncodingException | NoSuchAlgorithmException | NullPointerException ex) {
-            FacesContext.getCurrentInstance().addMessage("err", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Anmelden fehlgeschlagen.", " Benutzername oder Passwort falsch!"));
+            FacesContext.getCurrentInstance().addMessage("err", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Anmelden fehlgeschlagen. Benutzername oder Passwort falsch!", ""));
+        } catch (NoResultException | EJBException ex){
+            FacesContext.getCurrentInstance().addMessage("err", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Anmelden fehlgeschlagen. Benutzer gibt es nicht! Stattdessen registrieren", ""));
+            benutzerExistiertNicht = true;
         }
         return "anmeldung";
     }
     
-    public String regestrieren() {
+    public String registrieren() {
         byte[] salt = generateSalt(passwort.length());
 
         try {
             user.setPasswortHash(hashWithSalt(passwort, salt));
             service.create(user);
-            user = new Benutzer();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Erfolgreich angemeldet", " "));
+            FacesContext.getCurrentInstance().getAttributes().put("benutzer", service.sucheBenutzer(user.getBenutzername()));
             return "statistik";
         } catch (UnsupportedEncodingException | NoSuchAlgorithmException | EJBException e) {
-            FacesContext.getCurrentInstance().addMessage("err", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Regestrierung fehlgeschlagen.", " Benutzer gibt es bereits!"));
-            user = new Benutzer();
+            FacesContext.getCurrentInstance().addMessage("err", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Registrierung fehlgeschlagen. Benutzer gibt es bereits!", ""));
+            benutzerExistiert = true;
         }
-        return "regestrieren";
+        return "registrieren";
     }
 
     private byte[] generateSalt(int length) {
@@ -99,5 +105,12 @@ public class BenutzerBean implements Serializable{
     public void setUser(Benutzer user) {
         this.user = user;
     }
-    
+
+    public boolean isBenutzerExistiertNicht() {
+        return benutzerExistiertNicht;
+    }
+
+    public boolean isBenutzerExistiert() {
+        return benutzerExistiert;
+    }
 }

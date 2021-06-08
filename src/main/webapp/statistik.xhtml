@@ -1,22 +1,26 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Facelet Title</title>
     </h:head>
     <h:body>
         <h1>Statistik</h1>
-        <h:form>
-            <h:panelGrid columns="2">
-                <h:outputText value="Name: "/>
-                <h:inputText value="#{benutzerBean.user.benutzername}"/>
-                <h:outputText value="Passwort: "/>
-                <h:inputSecret value="#{benutzerBean.passwort}"/>
-            </h:panelGrid>
-            <h:commandButton value="Regestrieren" action="#{benutzerBean.anmelden()}"/>
-            <h:messages errorStyle="color:red" showSummary="true" showDetail="true" infoStyle="color:darkgreen" />
-        </h:form>
+        <h:outputText value="Name: #{statistikBean.user.benutzername}"/>
+        <h:panelGrid columns="2">
+            <h:outputText value="Gesamt: "/>
+            <h:outputText value="#{statistikBean.user.statistik.gesamt}"/>
+            <h:outputText value="aktueller Tag: "/>
+            <h:outputText value="#{statistikBean.user.statistik.aktuellerTag}"/>
+            <h:outputText value="aktuelle Woche: "/>
+            <h:outputText value="#{statistikBean.user.statistik.aktuelleWoche}"/>
+            <h:outputText value="bester Tag: "/>
+            <h:outputText value="#{statistikBean.user.statistik.besterTag}"/>
+            <h:outputText value="beste Woche: "/>
+            <h:outputText value="#{statistikBean.user.statistik.besteWoche}"/>
+        </h:panelGrid>
     </h:body>
 </html>
 

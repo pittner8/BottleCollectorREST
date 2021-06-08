@@ -13,9 +13,10 @@
                 <h:inputText value="#{benutzerBean.user.benutzername}"/>
                 <h:outputText value="Passwort: "/>
                 <h:inputSecret value="#{benutzerBean.passwort}"/>
+                <h:commandButton value="Anmelden" action="#{benutzerBean.anmelden()}"/>
+                <h:commandButton value="Registrieren" action="registrieren" rendered="#{benutzerBean.benutzerExistiertNicht}" immediate="true"/>
             </h:panelGrid>
-            <h:commandButton value="Anmelden" action="#{benutzerBean.anmelden()}"/>
-            <h:messages errorStyle="color:red" showSummary="true" showDetail="true" infoStyle="color:darkgreen" />
+            <h:messages errorStyle="color:red" showSummary="true"/>
         </h:form>
     </h:body>
 </html>

@@ -1,0 +1,7 @@
+model\Statistik.class
+ui\BenutzerBean.class
+model\Benutzer.class
+service\BenutzerFacadeREST.class
+service\AbstractFacade.class
+demo\bottlecollectorrest\JAXRSConfiguration.class
+ui\StatistikBean.class
