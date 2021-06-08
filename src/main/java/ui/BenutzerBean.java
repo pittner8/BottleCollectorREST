@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import javax.ejb.EJBException;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
@@ -34,7 +35,20 @@ public class BenutzerBean implements Serializable{
     private String passwort;
     private Benutzer user = new Benutzer();
     
-    public void regestrieren() {
+    public String anmelden() {
+        try {
+            Benutzer dbUser = service.sucheBenutzer(user.getBenutzername());
+            user.setPasswortHash(hashWithSalt(passwort, dbUser.getSalt()));
+            if (Arrays.equals(dbUser.getPasswortHash(), user.getPasswortHash())) {
+                return "statistik";
+            }
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException | NullPointerException ex) {
+            FacesContext.getCurrentInstance().addMessage("err", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Anmelden fehlgeschlagen.", " Benutzername oder Passwort falsch!"));
+        }
+        return "anmeldung";
+    }
+    
+    public String regestrieren() {
         byte[] salt = generateSalt(passwort.length());
 
         try {
@@ -42,10 +56,12 @@ public class BenutzerBean implements Serializable{
             service.create(user);
             user = new Benutzer();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Erfolgreich angemeldet", " "));
+            return "statistik";
         } catch (UnsupportedEncodingException | NoSuchAlgorithmException | EJBException e) {
             FacesContext.getCurrentInstance().addMessage("err", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Regestrierung fehlgeschlagen.", " Benutzer gibt es bereits!"));
             user = new Benutzer();
         }
+        return "regestrieren";
     }
 
     private byte[] generateSalt(int length) {

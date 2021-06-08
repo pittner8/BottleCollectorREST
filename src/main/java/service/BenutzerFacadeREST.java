@@ -19,6 +19,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import model.Benutzer;
+import model.Statistik;
 
 /**
  *
@@ -39,6 +40,9 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
     @Override
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void create(Benutzer entity) {
+        Statistik s = new Statistik();
+        em.persist(s);
+        entity.setStatistik(s);
         super.create(entity);
     }
 
@@ -64,28 +68,36 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
 
     @GET
     @Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public List<Benutzer> findAll() {
         return super.findAll();
     }
-
+    
     @GET
-    @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public List<Benutzer> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
-        return super.findRange(new int[]{from, to});
+    @Path("statistik/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Statistik getBenutzerStatistik(@PathParam("id") Long id){
+        return em.find(Benutzer.class, id).getStatistik();
     }
-
-    @GET
-    @Path("count")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String countREST() {
-        return String.valueOf(super.count());
+    
+    @PUT
+    @Path("statistik/{id}")
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public void updateUserStatistik(@PathParam("id") Long id, Statistik stat){
+        Statistik s = find(id).getStatistik();
+        long oldId = s.getId();
+        s = stat;
+        s.setId(oldId);
+        em.merge(s);
     }
 
     @Override
     protected EntityManager getEntityManager() {
         return em;
+    }
+    
+    public Benutzer sucheBenutzer(String name){
+        return em.createNamedQuery("benutzer.findByName", Benutzer.class).setParameter("benutzername", name).getSingleResult();
     }
     
 }

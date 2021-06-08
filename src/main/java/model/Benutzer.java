@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -20,6 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @XmlRootElement
+@NamedQuery(name = "benutzer.findByName", query = "SELECT b FROM Benutzer b WHERE b.benutzername = :benutzername")
 public class Benutzer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
