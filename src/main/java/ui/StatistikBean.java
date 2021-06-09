@@ -7,8 +7,8 @@ package ui;
 
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ConversationScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import model.Benutzer;
@@ -19,7 +19,7 @@ import service.BenutzerFacadeREST;
  * @author Florian
  */
 @Named
-@ConversationScoped
+@ViewScoped
 public class StatistikBean implements Serializable{
     @Inject
     private BenutzerFacadeREST service;
@@ -29,7 +29,6 @@ public class StatistikBean implements Serializable{
     public void ini(){
         // beim neuladen nicht abstürzen
         user = (Benutzer) FacesContext.getCurrentInstance().getAttributes().get("benutzer");
-        user = service.find(user.getId());
     }
 
     public Benutzer getUser() {
