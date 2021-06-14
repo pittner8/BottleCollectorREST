@@ -6,6 +6,9 @@
 package model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,10 +24,13 @@ public class Statistik implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private double gesamt;
-    private double besterTag;
-    private double aktuellerTag;
-    private double besteWoche;
-    private double aktuelleWoche;
+    private double besterTagMeter;
+    private double aktuellerTagMeter;
+    private double besteWocheMeter;
+    private double aktuelleWocheMeter;
+    private String besterTagDatum = LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+    private int besteWocheJahr;
+    private int besteWocheInInt;
     
     public Statistik (){
         
@@ -46,36 +52,60 @@ public class Statistik implements Serializable {
         this.gesamt = gesamt;
     }
 
-    public double getBesterTag() {
-        return besterTag;
+    public double getBesterTagMeter() {
+        return besterTagMeter;
     }
 
-    public void setBesterTag(double besterTag) {
-        this.besterTag = besterTag;
+    public void setBesterTagMeter(double besterTagMeter) {
+        this.besterTagMeter = besterTagMeter;
     }
 
-    public double getAktuellerTag() {
-        return aktuellerTag;
+    public double getAktuellerTagMeter() {
+        return aktuellerTagMeter;
     }
 
-    public void setAktuellerTag(double aktuellerTag) {
-        this.aktuellerTag = aktuellerTag;
+    public void setAktuellerTagMeter(double aktuellerTagMeter) {
+        this.aktuellerTagMeter = aktuellerTagMeter;
     }
 
-    public double getBesteWoche() {
-        return besteWoche;
+    public double getBesteWocheMeter() {
+        return besteWocheMeter;
     }
 
-    public void setBesteWoche(double besteWoche) {
-        this.besteWoche = besteWoche;
+    public void setBesteWocheMeter(double besteWocheMeter) {
+        this.besteWocheMeter = besteWocheMeter;
     }
 
-    public double getAktuelleWoche() {
-        return aktuelleWoche;
+    public double getAktuelleWocheMeter() {
+        return aktuelleWocheMeter;
     }
 
-    public void setAktuelleWoche(double aktuelleWoche) {
-        this.aktuelleWoche = aktuelleWoche;
+    public void setAktuelleWocheMeter(double aktuelleWocheMeter) {
+        this.aktuelleWocheMeter = aktuelleWocheMeter;
+    }
+
+    public String getBesterTagDatum() {
+        return besterTagDatum;
+    }
+
+    public void setBesterTagDatum(String besterTagDatum) {
+        this.besterTagDatum = besterTagDatum;
+    }
+
+    public int getBesteWocheJahr() {
+        return besteWocheJahr;
+    }
+
+    public void setBesteWocheJahr(int besteWocheJahr) {
+        this.besteWocheJahr = besteWocheJahr;
+    }
+
+    public int getBesteWocheInInt() {
+        return besteWocheInInt;
+    }
+
+    public void setBesteWocheInInt(int besteWocheInInt) {
+        this.besteWocheInInt = besteWocheInInt;
     }
 
     @Override

@@ -13,13 +13,17 @@
             <h:outputText value="Gesamt: "/>
             <h:outputText value="#{statistikBean.user.statistik.gesamt}"/>
             <h:outputText value="aktueller Tag: "/>
-            <h:outputText value="#{statistikBean.user.statistik.aktuellerTag}"/>
+            <h:outputText value="#{statistikBean.user.statistik.aktuellerTagMeter}"/>
             <h:outputText value="aktuelle Woche: "/>
-            <h:outputText value="#{statistikBean.user.statistik.aktuelleWoche}"/>
+            <h:outputText value="#{statistikBean.user.statistik.aktuelleWocheMeter}"/>
             <h:outputText value="bester Tag: "/>
-            <h:outputText value="#{statistikBean.user.statistik.besterTag}"/>
+            <h:outputText value="#{statistikBean.user.statistik.besterTagDatum}"/>
+            <h:outputText value="mit: "/>
+            <h:outputText value="#{statistikBean.user.statistik.besterTagMeter}"/>
             <h:outputText value="beste Woche: "/>
-            <h:outputText value="#{statistikBean.user.statistik.besteWoche}"/>
+            <h:outputText value="#{statistikBean.user.statistik.besteWocheInInt} KW im Jahr #{statistikBean.user.statistik.besteWocheJahr}"/>
+            <h:outputText value="mit: "/>
+            <h:outputText value="#{statistikBean.user.statistik.besteWocheMeter}"/>
         </h:panelGrid>
     </h:body>
 </html>
