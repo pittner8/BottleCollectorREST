@@ -19,6 +19,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import model.Benutzer;
+import model.HighScoreDTO;
 import model.Statistik;
 
 /**
@@ -38,7 +39,7 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
 
     @POST
     @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     public void create(Benutzer entity) {
         Statistik s = new Statistik();
         em.persist(s);
@@ -48,7 +49,7 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
 
     @PUT
     @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     public void edit(@PathParam("id") Long id, Benutzer entity) {
         super.edit(entity);
     }
@@ -61,7 +62,7 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
 
     @GET
     @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
     public Benutzer find(@PathParam("id") Long id) {
         return super.find(id);
     }
@@ -82,13 +83,28 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
     
     @PUT
     @Path("statistik/{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
     public void updateUserStatistik(@PathParam("id") Long id, Statistik stat){
         Statistik s = find(id).getStatistik();
         long oldId = s.getId();
         s = stat;
         s.setId(oldId);
         em.merge(s);
+    }
+    
+    @GET
+    @Path("highscore")
+    @Produces({MediaType.APPLICATION_JSON})
+    public HighScoreDTO getHighscore(){
+        double highscore = 0;
+        Benutzer temp = new Benutzer();
+        for(Benutzer b : findAll()){
+            if(b.getStatistik().getGesamt() > highscore){
+                highscore = b.getStatistik().getGesamt();
+                temp = b;
+            }
+        }
+        return new HighScoreDTO(temp.getBenutzername(), highscore);
     }
 
     @Override
