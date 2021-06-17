@@ -6,8 +6,6 @@
 package ui;
 
 import java.io.Serializable;
-import javax.annotation.PostConstruct;
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -23,15 +21,11 @@ import service.BenutzerFacadeREST;
 public class StatistikBean implements Serializable{
     @Inject
     private BenutzerFacadeREST service;
-    private Benutzer user;
+    @Inject
+    private BenutzerBean benutzerBean;
     
-    @PostConstruct
-    public void ini(){
-        // beim neuladen nicht abstürzen
-        user = (Benutzer) FacesContext.getCurrentInstance().getAttributes().get("benutzer");
-    }
 
     public Benutzer getUser() {
-        return user;
+        return benutzerBean.getUser();
     }
 }
