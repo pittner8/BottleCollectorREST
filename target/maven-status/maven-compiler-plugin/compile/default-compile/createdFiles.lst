@@ -2,6 +2,7 @@ model\Statistik.class
 ui\BenutzerBean.class
 model\Benutzer.class
 service\BenutzerFacadeREST.class
+model\HighScoreDTO.class
 service\AbstractFacade.class
 demo\bottlecollectorrest\JAXRSConfiguration.class
 ui\StatistikBean.class
