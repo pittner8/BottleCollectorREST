@@ -1,8 +1,11 @@
 model\Statistik.class
 ui\BenutzerBean.class
 model\Benutzer.class
+model\JWTKey.class
 service\BenutzerFacadeREST.class
 model\HighScoreDTO.class
+model\Login.class
 service\AbstractFacade.class
 demo\bottlecollectorrest\JAXRSConfiguration.class
 ui\StatistikBean.class
+service\LoginFacadeRest.class

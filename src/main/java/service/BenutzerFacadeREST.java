@@ -26,6 +26,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import model.Benutzer;
 import model.HighScoreDTO;
+import model.JWTKey;
 import model.Login;
 import model.Statistik;
 
@@ -150,5 +151,13 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
     public Benutzer sucheBenutzer(String name) {
         return em.createNamedQuery("benutzer.findByName", Benutzer.class).setParameter("benutzername", name).getSingleResult();
     }
-
+    
+    public List<JWTKey> getJWTKey(){
+        return em.createNamedQuery("JWTKey.findAllKeys", JWTKey.class).getResultList();
+    }
+    
+    public void anlegenJWTKey(JWTKey key){
+        em.persist(key);
+    }
+    
 }
