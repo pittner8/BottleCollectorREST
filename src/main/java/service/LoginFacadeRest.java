@@ -51,7 +51,7 @@ public class LoginFacadeRest {
     public String login(Login login) {
         // TODO: anmelden und token generieren in eigene methoden auslagern
         // TODO: methode zum verifizieren des token & key in der datenbank speichern
-        if(!validiereBenutzer(login)) return "error!!!!!!!";
+        if(!validiereBenutzer(login)) return "Ungültiger Benutzer oder passwort.";
         Benutzer user = service.sucheBenutzer(login.getBenutzername());
         
         Key key = service.getKey();
@@ -61,7 +61,7 @@ public class LoginFacadeRest {
             return jws;
             
         } catch (JwtException e) {
-            return "error";
+            return "Fehler beim login.";
         }
     }
     
