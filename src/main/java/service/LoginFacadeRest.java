@@ -7,20 +7,14 @@ package service;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
@@ -29,7 +23,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import model.Benutzer;
-import model.JWTKey;
 import model.Login;
 
 /**
@@ -43,29 +36,21 @@ public class LoginFacadeRest {
     BenutzerFacadeREST service;
     
     // https://github.com/jwtk/jjwt#jws
-    // FormDataParam statt FormParam bei mehreren Param
     @POST
     @Path("login")
     @Produces({MediaType.TEXT_PLAIN})
     @Consumes({MediaType.APPLICATION_JSON})
     public String login(Login login) {
-        // TODO: anmelden und token generieren in eigene methoden auslagern
-        // TODO: methode zum verifizieren des token & key in der datenbank speichern
         if(!validiereBenutzer(login)) return "Ungültiger Benutzer oder passwort.";
-        Benutzer user = service.sucheBenutzer(login.getBenutzername());
-        
-        Key key = service.getKey();
-        String jws = generateToken(login);
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jws);
+            String jws = generateToken(login);
             return jws;
-            
         } catch (JwtException e) {
             return "Fehler beim login.";
         }
     }
     
-    private String generateToken(Login login){
+    private String generateToken(Login login) throws JwtException{
         Benutzer user = service.sucheBenutzer(login.getBenutzername());
         
         Key key = service.getKey();
@@ -75,6 +60,7 @@ public class LoginFacadeRest {
                          .setIssuedAt(new Date())
                          .signWith(key)
                          .compact();
+        Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jws);
         return jws;
     }
     
