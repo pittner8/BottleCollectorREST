@@ -1,11 +1,13 @@
 model\Statistik.class
-ui\BenutzerBean.class
-model\Benutzer.class
+annotation\JWTNeeded.class
 model\JWTKey.class
 service\BenutzerFacadeREST.class
+service\AbstractFacade.class
+service\LoginFacadeRest.class
+ui\BenutzerBean.class
+model\Benutzer.class
 model\HighScoreDTO.class
 model\Login.class
-service\AbstractFacade.class
 demo\bottlecollectorrest\JAXRSConfiguration.class
 ui\StatistikBean.class
-service\LoginFacadeRest.class
+annotation\JWTNeededFilter.class

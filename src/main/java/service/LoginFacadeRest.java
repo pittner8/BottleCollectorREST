@@ -54,12 +54,7 @@ public class LoginFacadeRest {
         if(!validiereBenutzer(login)) return "error!!!!!!!";
         Benutzer user = service.sucheBenutzer(login.getBenutzername());
         
-        JWTKey byteKey;
-        if(service.getJWTKey().isEmpty()){
-            service.anlegenJWTKey(new JWTKey(Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded()));
-        }
-        byteKey = service.getJWTKey().get(0);
-        Key key = Keys.hmacShaKeyFor(byteKey.getPrivateKey());
+        Key key = service.getKey();
         String jws = generateToken(login);
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jws);
@@ -73,7 +68,7 @@ public class LoginFacadeRest {
     private String generateToken(Login login){
         Benutzer user = service.sucheBenutzer(login.getBenutzername());
         
-        Key key = Keys.hmacShaKeyFor(service.getJWTKey().get(0).getPrivateKey());
+        Key key = service.getKey();
         String jws = Jwts.builder()
                          .setSubject(Long.toString(user.getId()))
                          .claim("username", user.getBenutzername())

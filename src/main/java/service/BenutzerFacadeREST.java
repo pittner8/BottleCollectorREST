@@ -5,6 +5,7 @@
  */
 package service;
 
+import annotation.JWTNeeded;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -23,7 +24,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import model.Benutzer;
 import model.HighScoreDTO;
 import model.JWTKey;
@@ -48,6 +52,7 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
     @POST
     @Override
     @Consumes({MediaType.APPLICATION_JSON})
+    @JWTNeeded
     public void create(Benutzer entity) {
         Statistik s = new Statistik();
         em.persist(s);
@@ -58,19 +63,15 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
     @PUT
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
+    @JWTNeeded
     public void edit(@PathParam("id") Long id, Benutzer entity) {
         super.edit(entity);
-    }
-
-    @DELETE
-    @Path("{id}")
-    public void remove(@PathParam("id") Long id) {
-        super.remove(super.find(id));
     }
 
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_JSON})
+    @JWTNeeded
     public Benutzer find(@PathParam("id") Long id) {
         return super.find(id);
     }
@@ -78,6 +79,7 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
     @GET
     @Override
     @Produces({MediaType.APPLICATION_JSON})
+    @JWTNeeded
     public List<Benutzer> findAll() {
         return super.findAll();
     }
@@ -85,6 +87,7 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
     @GET
     @Path("statistik/{id}")
     @Produces({MediaType.APPLICATION_JSON})
+    @JWTNeeded
     public Statistik getBenutzerStatistik(@PathParam("id") Long id) {
         return em.find(Benutzer.class, id).getStatistik();
     }
@@ -92,6 +95,7 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
     @PUT
     @Path("statistik/{id}")
     @Consumes({MediaType.APPLICATION_JSON})
+    @JWTNeeded
     public void updateUserStatistik(@PathParam("id") Long id, Statistik stat) {
         Statistik s = find(id).getStatistik();
         long oldId = s.getId();
@@ -103,6 +107,7 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
     @GET
     @Path("highscore")
     @Produces({MediaType.APPLICATION_JSON})
+    @JWTNeeded
     public HighScoreDTO getHighscore() {
         double highscore = 0;
         Benutzer temp = new Benutzer();
@@ -115,35 +120,8 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
         return new HighScoreDTO(temp.getBenutzername(), highscore);
     }
 
-    // https://github.com/jwtk/jjwt#jws
-    // FormDataParam statt FormParam bei mehreren Param
-    @POST
-    @Path("login")
-    @Produces({MediaType.TEXT_PLAIN})
-    @Consumes({MediaType.APPLICATION_JSON})
-    public String login(Login login) {
-        // TODO: prüfen ob die richtigen anmelde daten gesendet werden
-        // TODO: anmelden und token generieren in eigene methoden auslagern
-        // TODO: methode zum verifizieren des token & key in der datenbank speichern
-        Benutzer user = sucheBenutzer(login.getBenutzername());
-        
-        Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-        String jws = Jwts.builder()
-                         .setSubject(Long.toString(user.getId()))
-                         .claim("username", user.getBenutzername())
-                         .setIssuedAt(new Date())
-                         .signWith(key)
-                         .compact();
-        try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jws);
-            return jws;
-            
-        } catch (JwtException e) {
-            return "error";
-        }
-    }
-
     @Override
+
     protected EntityManager getEntityManager() {
         return em;
     }
@@ -151,13 +129,19 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
     public Benutzer sucheBenutzer(String name) {
         return em.createNamedQuery("benutzer.findByName", Benutzer.class).setParameter("benutzername", name).getSingleResult();
     }
-    
-    public List<JWTKey> getJWTKey(){
-        return em.createNamedQuery("JWTKey.findAllKeys", JWTKey.class).getResultList();
+
+    public Key getKey() {
+        List<JWTKey> erg = em.createNamedQuery("JWTKey.findAllKeys", JWTKey.class).getResultList();
+        if(erg.isEmpty()){
+            JWTKey jKey = new JWTKey(Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded());
+            anlegenJWTKey(jKey);
+            return Keys.hmacShaKeyFor(jKey.getPrivateKey());
+        }else{
+            return Keys.hmacShaKeyFor(erg.get(0).getPrivateKey());
+        }
     }
-    
-    public void anlegenJWTKey(JWTKey key){
+
+    public void anlegenJWTKey(JWTKey key) {
         em.persist(key);
     }
-    
 }
