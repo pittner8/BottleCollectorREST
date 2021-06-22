@@ -34,6 +34,7 @@ public class BenutzerBean implements Serializable{
     private BenutzerFacadeREST service;
     @Size(min = 5, message = "Passwort muss mindestens 5 Zeichen lang sein")
     private String passwort;
+    private String passwort2;
     private Benutzer user = new Benutzer();
     private boolean benutzerExistiertNicht = false;
     private boolean benutzerExistiert = false;
@@ -56,6 +57,11 @@ public class BenutzerBean implements Serializable{
     }
     
     public String registrieren() {
+        if(!passwort.equals(passwort2)){
+            FacesContext.getCurrentInstance().addMessage("err", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Passwörter stimmen nicht überein", ""));
+            return "registrieren";
+        }
+        
         byte[] salt = generateSalt(passwort.length());
 
         try {
@@ -112,5 +118,13 @@ public class BenutzerBean implements Serializable{
 
     public boolean isBenutzerExistiert() {
         return benutzerExistiert;
+    }
+
+    public String getPasswort2() {
+        return passwort2;
+    }
+
+    public void setPasswort2(String passwort2) {
+        this.passwort2 = passwort2;
     }
 }

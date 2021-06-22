@@ -13,6 +13,8 @@
                 <h:inputText value="#{benutzerBean.user.benutzername}"/>
                 <h:outputText value="Passwort: "/>
                 <h:inputSecret value="#{benutzerBean.passwort}"/>
+                <h:outputText value="Passwort erneut eingeben: "/>
+                <h:inputSecret value="#{benutzerBean.passwort2}"/>
                 <h:commandButton value="Registrieren" action="#{benutzerBean.registrieren()}"/>
                 <h:commandButton value="Anmelden" action="anmeldung" immediate="true" rendered="#{benutzerBean.benutzerExistiert}"/>
             </h:panelGrid>
