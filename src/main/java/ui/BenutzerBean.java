@@ -21,6 +21,7 @@ import javax.persistence.NoResultException;
 import javax.validation.constraints.Size;
 import model.Benutzer;
 import service.BenutzerFacadeREST;
+import service.Service;
 
 /**
  *
@@ -31,7 +32,9 @@ import service.BenutzerFacadeREST;
 public class BenutzerBean implements Serializable{
     
     @Inject
-    private BenutzerFacadeREST service;
+    private Service service;
+    @Inject
+    private BenutzerFacadeREST benutzerService;
     @Size(min = 5, message = "Passwort muss mindestens 5 Zeichen lang sein")
     private String passwort;
     private String passwort2;
@@ -66,7 +69,7 @@ public class BenutzerBean implements Serializable{
 
         try {
             user.setPasswortHash(hashWithSalt(passwort, salt));
-            service.create(user);
+            benutzerService.create(user);
             FacesContext.getCurrentInstance().getAttributes().put("benutzer", service.sucheBenutzer(user.getBenutzername()));
             return "statistik";
         } catch (UnsupportedEncodingException | NoSuchAlgorithmException | EJBException e) {

@@ -33,7 +33,7 @@ import model.Login;
 @Path("account")
 public class LoginFacadeRest {
     @Inject
-    BenutzerFacadeREST service;
+    Service service;
     
     // https://github.com/jwtk/jjwt#jws
     @POST
@@ -42,17 +42,18 @@ public class LoginFacadeRest {
     @Consumes({MediaType.APPLICATION_JSON})
     public String login(Login login) {
         if(!validiereBenutzer(login)) return "Ungültiger Benutzer oder passwort.";
+        Benutzer user = service.sucheBenutzer(login.getBenutzername());
         try {
-            String jws = generateToken(login);
+            String jws = generateToken(user);
+            user.setToken(jws);
+            service.mergeBenutzer(user);
             return jws;
         } catch (JwtException e) {
             return "Fehler beim login.";
         }
     }
     
-    private String generateToken(Login login) throws JwtException{
-        Benutzer user = service.sucheBenutzer(login.getBenutzername());
-        
+    private String generateToken(Benutzer user) throws JwtException{
         Key key = service.getKey();
         String jws = Jwts.builder()
                          .setSubject(Long.toString(user.getId()))

@@ -6,32 +6,20 @@
 package service;
 
 import annotation.JWTNeeded;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import java.security.Key;
-import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import model.Benutzer;
 import model.HighScoreDTO;
-import model.JWTKey;
-import model.Login;
 import model.Statistik;
 
 /**
@@ -109,7 +97,7 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
     @Produces({MediaType.APPLICATION_JSON})
     @JWTNeeded
     public HighScoreDTO getHighscore() {
-        double highscore = 0;
+        double highscore = -1;
         Benutzer temp = new Benutzer();
         for (Benutzer b : findAll()) {
             if (b.getStatistik().getGesamt() > highscore) {
@@ -125,23 +113,5 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
     protected EntityManager getEntityManager() {
         return em;
     }
-
-    public Benutzer sucheBenutzer(String name) {
-        return em.createNamedQuery("benutzer.findByName", Benutzer.class).setParameter("benutzername", name).getSingleResult();
-    }
-
-    public Key getKey() {
-        List<JWTKey> erg = em.createNamedQuery("JWTKey.findAllKeys", JWTKey.class).getResultList();
-        if(erg.isEmpty()){
-            JWTKey jKey = new JWTKey(Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded());
-            anlegenJWTKey(jKey);
-            return Keys.hmacShaKeyFor(jKey.getPrivateKey());
-        }else{
-            return Keys.hmacShaKeyFor(erg.get(0).getPrivateKey());
-        }
-    }
-
-    public void anlegenJWTKey(JWTKey key) {
-        em.persist(key);
-    }
+    
 }

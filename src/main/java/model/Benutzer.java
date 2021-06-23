@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -21,17 +22,22 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @XmlRootElement
-@NamedQuery(name = "benutzer.findByName", query = "SELECT b FROM Benutzer b WHERE b.benutzername = :benutzername")
+@NamedQueries({
+    @NamedQuery(name = "benutzer.findByName", query = "SELECT b FROM Benutzer b WHERE b.benutzername = :benutzername"),
+    @NamedQuery(name = "Benutzer.findByToken", query = "SELECT b FROM Benutzer b WHERE b.token = :token")
+})
 public class Benutzer implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(unique = true, length = 30)
     private String benutzername;
-    private byte [] passwortHash;
-    private byte [] salt;
+    private byte[] passwortHash;
+    private byte[] salt;
     @OneToOne
     private Statistik statistik;
+    private String token;
 
     public Benutzer() {
     }
@@ -82,6 +88,14 @@ public class Benutzer implements Serializable {
         this.statistik = statistik;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -105,5 +119,5 @@ public class Benutzer implements Serializable {
             return false;
         }
         return true;
-    }  
+    }
 }

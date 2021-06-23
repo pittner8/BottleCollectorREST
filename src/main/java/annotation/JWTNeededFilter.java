@@ -13,13 +13,14 @@ import io.jsonwebtoken.security.SignatureException;
 import java.io.IOException;
 import javax.annotation.Priority;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-import service.BenutzerFacadeREST;
+import service.Service;
 
 /**
  *
@@ -31,14 +32,17 @@ import service.BenutzerFacadeREST;
 public class JWTNeededFilter implements ContainerRequestFilter {
 
     @Inject
-    private BenutzerFacadeREST service;
+    private Service service;
 
     @Override
     public void filter(ContainerRequestContext crc) throws IOException {
         try {
             String token = crc.getHeaderString(HttpHeaders.AUTHORIZATION);
             Jwts.parserBuilder().setSigningKey(service.getKey()).build().parseClaimsJws(token);
-        } catch (ExpiredJwtException | MalformedJwtException | UnsupportedJwtException | SignatureException | IllegalArgumentException e) {
+            if(!service.findByToken(token).getToken().equals(token)){
+                crc.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+            }
+        } catch (Exception e) {
             crc.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
         }
     }
