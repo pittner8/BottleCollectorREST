@@ -42,9 +42,19 @@ public class LoginFacadeRest {
     @Consumes({MediaType.APPLICATION_JSON})
     public String login(Login login) {
         if(!validiereBenutzer(login)) return "Ungültiger Benutzer oder passwort.";
+        Key key = service.getKey();
         Benutzer user = service.sucheBenutzer(login.getBenutzername());
+        if(user.getToken() != null){
+            // prüft ob der Token bereits abgelaufen ist.
+            // Wenn er nicht abgelaufen ist wird der alte Token returnt
+            try {
+                Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(user.getToken());
+                return user.getToken();
+            } catch (JwtException e){} // absichtlich leer
+        }
+        
         try {
-            String jws = generateToken(user);
+            String jws = generateToken(user, key);
             user.setToken(jws);
             service.mergeBenutzer(user);
             return jws;
@@ -53,12 +63,12 @@ public class LoginFacadeRest {
         }
     }
     
-    private String generateToken(Benutzer user) throws JwtException{
-        Key key = service.getKey();
+    private String generateToken(Benutzer user, Key key) throws JwtException{
         String jws = Jwts.builder()
                          .setSubject(Long.toString(user.getId()))
                          .claim("username", user.getBenutzername())
                          .setIssuedAt(new Date())
+                         .setExpiration(new Date(new Date().getTime()+(4*60*60*1*1000))) // setzt die Gültigkeit des Token auf 4 Stunden
                          .signWith(key)
                          .compact();
         Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jws);
