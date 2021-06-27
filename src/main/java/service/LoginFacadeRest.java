@@ -68,7 +68,7 @@ public class LoginFacadeRest {
                          .setSubject(Long.toString(user.getId()))
                          .claim("username", user.getBenutzername())
                          .setIssuedAt(new Date())
-                         .setExpiration(new Date(new Date().getTime()+(4*60*60*1*1000))) // setzt die Gültigkeit des Token auf 4 Stunden
+                         .setExpiration(new Date(new Date().getTime()+(20*1000))) // setzt die Gültigkeit des Token auf 4 Stunden (4*60*60*1*1000)
                          .signWith(key)
                          .compact();
         Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jws);
@@ -81,11 +81,7 @@ public class LoginFacadeRest {
             Benutzer user = new Benutzer();
             user.setBenutzername(loginUser.getBenutzername());
             user.setPasswortHash(hashWithSalt(loginUser.getPasswort(), dbUser.getSalt()));
-            if (Arrays.equals(dbUser.getPasswortHash(), user.getPasswortHash())) {
-                return true;
-            }else{
-                return false;
-            }
+            return Arrays.equals(dbUser.getPasswortHash(), user.getPasswortHash());
         } catch (NullPointerException | NoResultException | EJBException | NoSuchAlgorithmException | UnsupportedEncodingException ex) {
             return false;
         }

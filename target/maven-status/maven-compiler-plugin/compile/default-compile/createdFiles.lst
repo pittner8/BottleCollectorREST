@@ -4,6 +4,7 @@ model\JWTKey.class
 service\BenutzerFacadeREST.class
 service\AbstractFacade.class
 service\LoginFacadeRest.class
+service\Service.class
 ui\BenutzerBean.class
 model\Benutzer.class
 model\HighScoreDTO.class
