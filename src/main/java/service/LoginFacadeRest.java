@@ -35,7 +35,6 @@ public class LoginFacadeRest {
     @Inject
     Service service;
     
-    // https://github.com/jwtk/jjwt#jws
     @POST
     @Path("login")
     @Produces({MediaType.TEXT_PLAIN})
