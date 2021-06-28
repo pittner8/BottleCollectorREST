@@ -76,16 +76,16 @@ public class BenutzerFacadeREST extends AbstractFacade<Benutzer> {
     @Path("statistik/{id}")
     @Produces({MediaType.APPLICATION_JSON})
     @JWTNeeded
-    public Statistik getBenutzerStatistik(@PathParam("id") Long id) {
-        return em.find(Benutzer.class, id).getStatistik();
+    public Statistik getBenutzerStatistik(@PathParam("id") Long id) {               // noch nicht fertig implementiert
+        return em.find(Benutzer.class, id).getStatistik();                          // methode ist nur zu testzwecken da
     }
 
     @PUT
     @Path("statistik/{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     @JWTNeeded
-    public void updateUserStatistik(@PathParam("id") Long id, Statistik stat) {
-        Statistik s = find(id).getStatistik();
+    public void updateUserStatistik(@PathParam("id") Long id, Statistik stat) {     // noch nicht fertig implementiert
+        Statistik s = find(id).getStatistik();                                      // methode ist nur zu testzwecken da
         long oldId = s.getId();
         s = stat;
         s.setId(oldId);
