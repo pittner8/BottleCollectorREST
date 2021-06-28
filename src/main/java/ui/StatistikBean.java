@@ -26,6 +26,6 @@ public class StatistikBean implements Serializable{
     
 
     public Benutzer getUser() {
-        return benutzerBean.getUser();
+        return service.find(benutzerBean.getUser().getId());
     }
 }
